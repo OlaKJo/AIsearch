@@ -8,6 +8,10 @@ public class Tree {
 	}
 	
 	public void printTree() {
-		root.printNode();
+		root.printNode(0);
+	}
+	
+	public Node getRoot() {
+		return root;
 	}
 }

@@ -1,7 +1,8 @@
 package search;
 
+import java.util.Comparator;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
@@ -9,16 +10,17 @@ import tree.Node;
 import tree.Step;
 import tree.Tree;
 
-public class BreadthFirstSearch implements Search {
+public class UniformCostSearch implements Search {
 
 	private Path thePath = null;
-	private Queue<Node> frontier;
+	private Queue<Step> frontier;
 	private Set<Node> explored;
 	private boolean goalFound = false;
 	private Node goalNode;
 
-	public BreadthFirstSearch() {
-		frontier = new LinkedList<Node>();
+	public UniformCostSearch() {
+		Comparator<Step> comparator = new StepComparator<Step>();
+		frontier = new PriorityQueue<Step>(10, comparator);
 		explored = new HashSet<Node>();
 		thePath = new Path();
 	}
@@ -26,10 +28,10 @@ public class BreadthFirstSearch implements Search {
 	@Override
 	public Path search(Tree t, String goal) {
 		Node currNode;
-		frontier.offer(t.getRoot());
+		frontier.offer(new Step(t.getRoot()));
 
 		while (frontier.peek() != null && goalFound == false) {
-			currNode = frontier.poll();
+			currNode = frontier.poll().getDest();
 			explored.add(currNode);
 			if (currNode.getState().getName().equals(goal)) {
 				goalFound = true;
@@ -39,7 +41,7 @@ public class BreadthFirstSearch implements Search {
 				Node n = s.getDest();
 				if (!explored.contains(n) && !frontier.contains(n)) {
 					n.setParent(currNode);
-					frontier.offer(n);
+					frontier.offer(s);
 				}
 			}
 		}
